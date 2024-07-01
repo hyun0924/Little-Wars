@@ -12,20 +12,27 @@ public class Unit : MonoBehaviour
     [SerializeField] private float moveSpeed;
     [SerializeField] private Sprite attackSprite;
     [SerializeField] private float attackDelay;
+    [SerializeField] private float attackDamage;
+    [SerializeField] private Sprite dieSprite;
+    [SerializeField] private float HP;
 
     private Animator animator;
     private SpriteRenderer sr;
 
+    private bool isFight;
     private float currentMoveSpeed;
     private GameObject enemy;
     private Sprite originSprite;
+    private ParticleSystem dust;
 
     private void Awake()
     {
         currentMoveSpeed = moveSpeed;
         animator = GetComponent<Animator>();
         sr = GetComponent<SpriteRenderer>();
+        dust = transform.GetComponentInChildren<ParticleSystem>();
         enemy = null;
+        isFight = false;
         originSprite = sr.sprite;
     }
 
@@ -33,6 +40,13 @@ public class Unit : MonoBehaviour
     {
         float newX = transform.position.x + currentMoveSpeed * Time.deltaTime;
         transform.position = new Vector3(newX, 0, 0);
+
+        if (!isFight && animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") && enemy != null)
+        {
+            Debug.Log("Fight!");
+            isFight = true;
+            OnAttack();
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -40,30 +54,33 @@ public class Unit : MonoBehaviour
         if (other.gameObject.tag != baseColor.ToString())
         {
             currentMoveSpeed = 0;
-            animator.SetBool("isFight", true);
-            transform.GetChild(0).gameObject.SetActive(false);
             enemy = other.gameObject;
+            animator.SetBool("isMoving", false);
+            dust.Stop();
         }
 
         else if (other.gameObject.tag == baseColor.ToString())
         {
             currentMoveSpeed = 0;
-            transform.GetChild(0).gameObject.SetActive(false);
+            dust.Stop();
+            animator.SetBool("isMoving", false);
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        enemy = null;
         OnMoving();
     }
 
     public void OnMoving()
     {
-        animator.SetBool("isFight", false);
-        currentMoveSpeed = moveSpeed;
-        transform.GetChild(0).gameObject.SetActive(true);
+        Debug.Log("Move");
+        isFight = false;
+        animator.SetBool("isMoving", true);
         StopCoroutine(Attack(enemy));
-        enemy = null;
+        currentMoveSpeed = moveSpeed;
+        dust.Play();
     }
 
     public void OnAttack()
@@ -84,9 +101,11 @@ public class Unit : MonoBehaviour
         {
             WaitForSeconds waitAttack = new WaitForSeconds(attackDelay);
             WaitForSeconds waitIdle = new WaitForSeconds(0.15f);
-            while (animator.GetBool("isFight"))
+            while (isFight)
             {
+                Debug.Log("Attack");
                 sr.sprite = attackSprite;
+                enemy.GetComponent<Unit>().OnAttacked(attackDamage);
                 yield return waitIdle;
                 sr.sprite = originSprite;
                 yield return waitAttack;
@@ -96,5 +115,23 @@ public class Unit : MonoBehaviour
         {
             yield return null;
         }
+    }
+
+    public void OnAttacked(float damage)
+    {
+        HP -= damage;
+
+        if (HP <= 0)
+        {
+            StopAllCoroutines();
+            StartCoroutine(Die());
+        }
+    }
+
+    private IEnumerator Die()
+    {
+        sr.sprite = dieSprite;
+        yield return new WaitForSeconds(0.2f);
+        Destroy(gameObject);
     }
 }
