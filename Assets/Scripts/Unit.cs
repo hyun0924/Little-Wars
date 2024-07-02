@@ -3,21 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum BaseColor { Blue, Red }
-public enum UnitType { A, G, S, W }
 
 public class Unit : MonoBehaviour
 {
     [SerializeField] private BaseColor baseColor;
-    [SerializeField] private UnitType unitType;
-    [SerializeField] private float moveSpeed;
+    [SerializeField] private UnitData unitData;
     [SerializeField] private Sprite attackSprite;
-    [SerializeField] private float attackSpeed;
-    [SerializeField] private float attackDelay;
-    [SerializeField] private float attackDamage;
     [SerializeField] private Sprite hitSprite;
     [SerializeField] private Sprite hitRedSprite;
     [SerializeField] private Sprite dieSprite;
-    [SerializeField] private float HP;
 
     private Animator animator;
     private SpriteRenderer sr;
@@ -28,13 +22,14 @@ public class Unit : MonoBehaviour
     private bool isHit; // 맞고 있는 중인지
     private bool isDie; // 죽고 있는 중인지
     private float currentMoveSpeed;
+    private float currentHP;
     private GameObject enemy;
     private Sprite originSprite;
     private ParticleSystem dust;
 
     private void Awake()
     {
-        currentMoveSpeed = moveSpeed;
+        currentMoveSpeed = baseColor == BaseColor.Blue ? unitData.moveSpeed : -unitData.moveSpeed;
         animator = GetComponent<Animator>();
         sr = GetComponent<SpriteRenderer>();
         dust = transform.GetComponentInChildren<ParticleSystem>();
@@ -43,13 +38,14 @@ public class Unit : MonoBehaviour
         wasAttack = false;
         delay = 0f;
         originSprite = sr.sprite;
+        currentHP = unitData.HP;
     }
 
     private void Update()
     {
         float newX = transform.position.x + currentMoveSpeed * Time.deltaTime;
         transform.position = new Vector3(newX, 0, 0);
-        
+
         if (isDie) return;
 
         if (!isFight && animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") && enemy != null)
@@ -58,13 +54,13 @@ public class Unit : MonoBehaviour
         if (isFight)
         {
             delay += Time.deltaTime;
-            if (wasAttack && delay >= attackSpeed)
+            if (wasAttack && delay >= unitData.attackSpeed)
             {
                 delay = 0f;
                 wasAttack = false;
                 if (!isHit) sr.sprite = originSprite;
             }
-            else if (!isHit && !wasAttack && delay >= attackDelay)
+            else if (!isHit && !wasAttack && delay >= unitData.attackDelay)
             {
                 delay = 0f;
                 OnAttack();
@@ -107,7 +103,7 @@ public class Unit : MonoBehaviour
         sr.sprite = originSprite;
         animator.SetBool("isMoving", true);
         StopAllCoroutines();
-        currentMoveSpeed = moveSpeed;
+        currentMoveSpeed = baseColor == BaseColor.Blue ? unitData.moveSpeed : -unitData.moveSpeed;
         dust.Play();
     }
 
@@ -123,20 +119,20 @@ public class Unit : MonoBehaviour
         isHit = false;
         Debug.Log($"Attack: {baseColor}");
         sr.sprite = attackSprite;
-        Invoke("enemyHit", attackSpeed/3f);
+        Invoke("enemyHit", unitData.attackSpeed / 3f);
     }
 
     private void enemyHit()
     {
-        enemy.GetComponent<Unit>().OnHit(attackDamage);
+        enemy.GetComponent<Unit>().OnHit(unitData.attackDamage);
     }
 
     public void OnHit(float damage)
     {
         if (isDie) return;
-        HP -= damage;
+        currentHP -= damage;
 
-        if (HP <= 0)
+        if (currentHP <= 0)
         {
             CancelInvoke();
             StopAllCoroutines();

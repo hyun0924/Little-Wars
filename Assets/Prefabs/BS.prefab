@@ -102,16 +102,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseColor: 0
-  unitType: 2
-  moveSpeed: 1
+  unitData: {fileID: 11400000, guid: 57e5e937cd7f03244833785ad0bf3648, type: 2}
   attackSprite: {fileID: -3387478527075654864, guid: 4d701fb8bab94204e92af20e3e7b6a8a, type: 3}
-  attackSpeed: 0.15
-  attackDelay: 0.75
-  attackDamage: 3
   hitSprite: {fileID: -7808734593389313954, guid: 4d701fb8bab94204e92af20e3e7b6a8a, type: 3}
   hitRedSprite: {fileID: 4837840602407752856, guid: 4d701fb8bab94204e92af20e3e7b6a8a, type: 3}
   dieSprite: {fileID: -5877259873991932285, guid: 4d701fb8bab94204e92af20e3e7b6a8a, type: 3}
-  HP: 10
 --- !u!95 &7732931081408734108
 Animator:
   serializedVersion: 5
