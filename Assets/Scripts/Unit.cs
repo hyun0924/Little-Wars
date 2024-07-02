@@ -11,15 +11,22 @@ public class Unit : MonoBehaviour
     [SerializeField] private UnitType unitType;
     [SerializeField] private float moveSpeed;
     [SerializeField] private Sprite attackSprite;
+    [SerializeField] private float attackSpeed;
     [SerializeField] private float attackDelay;
     [SerializeField] private float attackDamage;
+    [SerializeField] private Sprite hitSprite;
+    [SerializeField] private Sprite hitRedSprite;
     [SerializeField] private Sprite dieSprite;
     [SerializeField] private float HP;
 
     private Animator animator;
     private SpriteRenderer sr;
 
-    private bool isFight;
+    private float delay;
+    private bool isFight; // 싸우는 중인지
+    private bool wasAttack; // 한 번 공격했는지
+    private bool isHit; // 맞고 있는 중인지
+    private bool isDie; // 죽고 있는 중인지
     private float currentMoveSpeed;
     private GameObject enemy;
     private Sprite originSprite;
@@ -33,6 +40,8 @@ public class Unit : MonoBehaviour
         dust = transform.GetComponentInChildren<ParticleSystem>();
         enemy = null;
         isFight = false;
+        wasAttack = false;
+        delay = 0f;
         originSprite = sr.sprite;
     }
 
@@ -40,17 +49,34 @@ public class Unit : MonoBehaviour
     {
         float newX = transform.position.x + currentMoveSpeed * Time.deltaTime;
         transform.position = new Vector3(newX, 0, 0);
+        
+        if (isDie) return;
 
         if (!isFight && animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") && enemy != null)
-        {
-            Debug.Log("Fight!");
             isFight = true;
-            OnAttack();
+
+        if (isFight)
+        {
+            delay += Time.deltaTime;
+            if (wasAttack && delay >= attackSpeed)
+            {
+                delay = 0f;
+                wasAttack = false;
+                if (!isHit) sr.sprite = originSprite;
+            }
+            else if (!isHit && !wasAttack && delay >= attackDelay)
+            {
+                delay = 0f;
+                OnAttack();
+                wasAttack = true;
+            }
         }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (isDie) return;
+
         if (other.gameObject.tag != baseColor.ToString())
         {
             currentMoveSpeed = 0;
@@ -75,63 +101,74 @@ public class Unit : MonoBehaviour
 
     public void OnMoving()
     {
-        Debug.Log("Move");
+        if (isDie) return;
+        Debug.Log($"Move: {baseColor}");
         isFight = false;
+        sr.sprite = originSprite;
         animator.SetBool("isMoving", true);
-        StopCoroutine(Attack(enemy));
+        StopAllCoroutines();
         currentMoveSpeed = moveSpeed;
         dust.Play();
     }
 
     public void OnAttack()
     {
-        if (enemy == null)
+        if (enemy == null || isDie)
         {
             OnMoving();
             return;
         }
 
         StopAllCoroutines();
-        StartCoroutine(Attack(enemy));
+        isHit = false;
+        Debug.Log($"Attack: {baseColor}");
+        sr.sprite = attackSprite;
+        Invoke("enemyHit", attackSpeed/3f);
     }
 
-    private IEnumerator Attack(GameObject enemy)
+    private void enemyHit()
     {
-        if (unitType == UnitType.S)
-        {
-            WaitForSeconds waitAttack = new WaitForSeconds(attackDelay);
-            WaitForSeconds waitIdle = new WaitForSeconds(0.15f);
-            while (isFight)
-            {
-                Debug.Log("Attack");
-                sr.sprite = attackSprite;
-                enemy.GetComponent<Unit>().OnAttacked(attackDamage);
-                yield return waitIdle;
-                sr.sprite = originSprite;
-                yield return waitAttack;
-            }
-        }
-        else
-        {
-            yield return null;
-        }
+        enemy.GetComponent<Unit>().OnHit(attackDamage);
     }
 
-    public void OnAttacked(float damage)
+    public void OnHit(float damage)
     {
+        if (isDie) return;
         HP -= damage;
 
         if (HP <= 0)
         {
+            CancelInvoke();
             StopAllCoroutines();
             StartCoroutine(Die());
         }
+        else
+        {
+            StartCoroutine(Hit());
+        }
+    }
+
+    private IEnumerator Hit()
+    {
+        Debug.Log($"Hit: {baseColor}");
+        isHit = true;
+        sr.sprite = hitRedSprite;
+        yield return new WaitForSeconds(0.15f);
+        isHit = false;
+        sr.sprite = hitSprite;
+        yield return new WaitForSeconds(0.15f);
+        sr.sprite = originSprite;
     }
 
     private IEnumerator Die()
     {
+        Debug.Log($"Die: {baseColor}");
+        isDie = true;
+        sr.sortingOrder--;
+        GetComponent<BoxCollider2D>().enabled = false;
+        yield return StartCoroutine(Hit());
         sr.sprite = dieSprite;
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(2f);
         Destroy(gameObject);
     }
 }

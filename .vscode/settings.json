@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Little Wars.sln"
+    "dotnet.defaultSolution": "Little-Wars.sln"
 }
