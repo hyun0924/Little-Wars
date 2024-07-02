@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Blue
   - Red
+  - Detect
   layers:
   - Default
   - TransparentFX
@@ -13,10 +14,10 @@ TagManager:
   - 
   - Water
   - UI
-  - Unit
-  - 
-  - 
-  - 
+  - UnitB
+  - UnitR
+  - DetectB
+  - DetectR
   - 
   - 
   - 

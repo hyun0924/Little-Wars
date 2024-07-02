@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum BaseColor { Blue, Red }
@@ -8,10 +9,6 @@ public class Unit : MonoBehaviour
 {
     [SerializeField] private BaseColor baseColor;
     [SerializeField] private UnitData unitData;
-    [SerializeField] private Sprite attackSprite;
-    [SerializeField] private Sprite hitSprite;
-    [SerializeField] private Sprite hitRedSprite;
-    [SerializeField] private Sprite dieSprite;
 
     private Animator animator;
     private SpriteRenderer sr;
@@ -72,12 +69,13 @@ public class Unit : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (isDie) return;
-
-        if (other.gameObject.tag != baseColor.ToString())
+        BaseColor enemyBaseColor = (BaseColor)(((int)baseColor + 1) % 2);
+        if (other.gameObject.tag == enemyBaseColor.ToString())
         {
             currentMoveSpeed = 0;
             enemy = other.gameObject;
             animator.SetBool("isMoving", false);
+            delay = unitData.attackDelay;
             dust.Stop();
         }
 
@@ -91,8 +89,11 @@ public class Unit : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        enemy = null;
-        OnMoving();
+        if (other.gameObject.tag != "Detect")
+        {
+            enemy = null;
+            OnMoving();
+        }
     }
 
     public void OnMoving()
@@ -109,17 +110,24 @@ public class Unit : MonoBehaviour
 
     public void OnAttack()
     {
-        if (enemy == null || isDie)
-        {
-            OnMoving();
-            return;
-        }
+        if (enemy == null || isDie) return;
 
         StopAllCoroutines();
         isHit = false;
         Debug.Log($"Attack: {baseColor}");
-        sr.sprite = attackSprite;
-        Invoke("enemyHit", unitData.attackSpeed / 3f);
+        sr.sprite = unitData.GetAttackSprite(baseColor);
+
+        if (unitData.unitType == UnitType.S || unitData.unitType == UnitType.G)
+            Invoke("enemyHit", unitData.attackSpeed / 3f);
+
+        else if (unitData.unitType == UnitType.A)
+        {
+            Vector3 pos;
+            if (baseColor == BaseColor.Red) pos = transform.position + new Vector3(-0.25f, 0.25f, 0);
+            else pos = transform.position + new Vector3(0.25f, 0.25f, 0);
+            GameObject arrow = Instantiate(unitData.GetProjective(baseColor), pos, Quaternion.identity);
+            arrow.GetComponent<Projectile>().damage = unitData.attackDamage;
+        }
     }
 
     private void enemyHit()
@@ -148,10 +156,10 @@ public class Unit : MonoBehaviour
     {
         Debug.Log($"Hit: {baseColor}");
         isHit = true;
-        sr.sprite = hitRedSprite;
+        sr.sprite = unitData.GetHitRedSprite(baseColor);
         yield return new WaitForSeconds(0.15f);
         isHit = false;
-        sr.sprite = hitSprite;
+        sr.sprite = unitData.GetHitSprite(baseColor);
         yield return new WaitForSeconds(0.15f);
         sr.sprite = originSprite;
     }
@@ -163,7 +171,7 @@ public class Unit : MonoBehaviour
         sr.sortingOrder--;
         yield return StartCoroutine(Hit());
         GetComponent<BoxCollider2D>().enabled = false;
-        sr.sprite = dieSprite;
+        sr.sprite = unitData.GetDieSprite(baseColor);
         yield return new WaitForSeconds(2f);
         Destroy(gameObject);
     }

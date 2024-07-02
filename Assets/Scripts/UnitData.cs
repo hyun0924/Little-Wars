@@ -13,4 +13,39 @@ public class UnitData : ScriptableObject
     public float attackDelay;
     public float attackDamage;
     public float HP;
+    [SerializeField] private Sprite attackSpriteB;
+    [SerializeField] private Sprite hitSpriteB;
+    [SerializeField] private Sprite hitRedSpriteB;
+    [SerializeField] private Sprite dieSpriteB;
+    [SerializeField] private Sprite attackSpriteR;
+    [SerializeField] private Sprite hitSpriteR;
+    [SerializeField] private Sprite hitRedSpriteR;
+    [SerializeField] private Sprite dieSpriteR;
+    [SerializeField] private GameObject projectiveB;
+    [SerializeField] private GameObject projectiveR;
+
+    public Sprite GetAttackSprite(BaseColor baseColor)
+    {
+        return baseColor == BaseColor.Blue ? attackSpriteB : attackSpriteR;
+    }
+
+    public Sprite GetHitSprite(BaseColor baseColor)
+    {
+        return baseColor == BaseColor.Blue ? hitSpriteB : hitSpriteR;
+    }
+    
+    public Sprite GetHitRedSprite(BaseColor baseColor)
+    {
+        return baseColor == BaseColor.Blue ? hitRedSpriteB : hitRedSpriteR;
+    }
+
+    public Sprite GetDieSprite(BaseColor baseColor)
+    {
+        return baseColor == BaseColor.Blue ? dieSpriteB : dieSpriteR;
+    }
+
+    public GameObject GetProjective(BaseColor baseColor)
+    {
+        return baseColor == BaseColor.Blue ? projectiveB : projectiveR;
+    }
 }
