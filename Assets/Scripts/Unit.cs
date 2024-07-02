@@ -165,8 +165,8 @@ public class Unit : MonoBehaviour
         Debug.Log($"Die: {baseColor}");
         isDie = true;
         sr.sortingOrder--;
-        GetComponent<BoxCollider2D>().enabled = false;
         yield return StartCoroutine(Hit());
+        GetComponent<BoxCollider2D>().enabled = false;
         sr.sprite = dieSprite;
         yield return new WaitForSeconds(2f);
         Destroy(gameObject);
