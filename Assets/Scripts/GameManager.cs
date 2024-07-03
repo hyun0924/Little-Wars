@@ -11,8 +11,18 @@ public class GameManager : MonoBehaviour
 
     private Difficulty currentDifficulty;
 
+    public static GameManager Instance;
     private void Awake()
     {
+        if (Instance == null)
+        {
+            DontDestroyOnLoad(gameObject);
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void OnDifficultyButtonClick(int difficulty)
