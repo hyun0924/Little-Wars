@@ -94,6 +94,10 @@ public class Unit : MonoBehaviour
 
         else if (other.gameObject.tag == baseColor.ToString())
         {
+            Debug.Log("TriggerEnter");
+            bool isFrontUnit = (transform.position.x - other.transform.position.x) / currentMoveSpeed > 0;
+            if (isFrontUnit) return;
+
             currentMoveSpeed = 0;
             if (dust != null) dust.Stop();
             animator.SetBool("isMoving", false);
@@ -102,6 +106,7 @@ public class Unit : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        Debug.Log("TriggerExit");
         if (other.gameObject.tag != "Detect")
         {
             if (unitData.unitType == UnitType.W && enemies.Contains(other.gameObject))

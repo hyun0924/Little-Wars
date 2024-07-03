@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 7732931081408734108}
   - component: {fileID: 5425785716090039506}
   - component: {fileID: 3929372629566156288}
-  m_Layer: 6
-  m_Name: BW
-  m_TagString: Blue
+  m_Layer: 7
+  m_Name: RWU
+  m_TagString: Red
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 1067247177677607147}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.85, y: 1.4, z: 0}
+  m_LocalPosition: {x: -0.125, y: 1.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -78,9 +78,9 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 3805063247507766641, guid: 4d701fb8bab94204e92af20e3e7b6a8a, type: 3}
+  m_Sprite: {fileID: 1552125296048368602, guid: 4d701fb8bab94204e92af20e3e7b6a8a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1.5, y: 1}
@@ -101,8 +101,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e331abf1d52be2a4a94895e2b10ab098, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseColor: 0
-  unitData: {fileID: 11400000, guid: 26c5e8cdaacc1a04d8cb466d7207a7c7, type: 2}
+  baseColor: 1
+  unitData: {fileID: 11400000, guid: 243ae2c7c4e5c0f47b304779acbdcc67, type: 2}
 --- !u!95 &7732931081408734108
 Animator:
   serializedVersion: 5
@@ -156,7 +156,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.21976104, y: 0.5}
+  m_Offset: {x: 0.175, y: 0.5}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
@@ -167,7 +167,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.060478, y: 1}
+  m_Size: {x: 1.15, y: 1}
   m_EdgeRadius: 0
 --- !u!50 &3929372629566156288
 Rigidbody2D:
@@ -208,6 +208,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DetectionRange
       objectReference: {fileID: 0}
+    - target: {fileID: 3260073036337437908, guid: d68bed174a343b346971312748a88dd9, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 3976733393938430113, guid: d68bed174a343b346971312748a88dd9, type: 3}
       propertyPath: m_Size.x
       value: 5
@@ -226,7 +230,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6249843754343605925, guid: d68bed174a343b346971312748a88dd9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.75
+      value: -1.75
       objectReference: {fileID: 0}
     - target: {fileID: 6249843754343605925, guid: d68bed174a343b346971312748a88dd9, type: 3}
       propertyPath: m_LocalPosition.y

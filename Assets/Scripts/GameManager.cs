@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject Title;
     [SerializeField] private GameObject[] Bases;
+    [SerializeField] private GameObject[] UnitPrefabs;
 
     private Difficulty currentDifficulty;
 
@@ -35,5 +36,17 @@ public class GameManager : MonoBehaviour
     {
         Title.SetActive(false);
         foreach (var b in Bases) b.SetActive(true);
+    }
+
+    public void SpawnUnit(BaseColor baseColor, UnitType unitType, int level)
+    {
+        int index = (int)baseColor * 4 + (int)unitType + level * 8;
+        if (unitType == UnitType.W)
+        {
+            Transform t = Bases[(int)baseColor].transform;
+            if (t.childCount == 1) Destroy(t.GetChild(0).gameObject);
+            Instantiate(UnitPrefabs[index], t);
+        }
+        else Instantiate(UnitPrefabs[index]);
     }
 }
