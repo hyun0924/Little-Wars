@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum Difficulty { Easy = 0, Normal, Hard }
 
@@ -9,8 +11,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject Title;
     [SerializeField] private GameObject[] Bases;
     [SerializeField] private GameObject[] UnitPrefabs;
+    [SerializeField] private Slider moneySlider;
+    [SerializeField] private TextMeshProUGUI moneyText;
 
     private Difficulty currentDifficulty;
+
+    [SerializeField] private int maxMoney;
+    private static int money;
 
     public static GameManager Instance;
     private void Awake()
@@ -24,6 +31,11 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        
+        money = 0;
+        moneySlider.value = 0;
+        moneyText.text = "0";
+        InvokeRepeating("IncreaseMoney", 0, 1);
     }
 
     public void OnDifficultyButtonClick(int difficulty)
@@ -48,5 +60,20 @@ public class GameManager : MonoBehaviour
             Instantiate(UnitPrefabs[index], t);
         }
         else Instantiate(UnitPrefabs[index]);
+    }
+
+    private void IncreaseMoney()
+    {
+        if (money == maxMoney) return;
+
+        moneySlider.value = ++money;
+        moneyText.text = "" + money;
+    }
+
+    public void DecreaseMoney(int price)
+    {
+        money = money - price;
+        moneySlider.value = ++money;
+        moneyText.text = "" + money;
     }
 }

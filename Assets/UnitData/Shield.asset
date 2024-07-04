@@ -18,6 +18,7 @@ MonoBehaviour:
   attackDelay: 1.5
   attackDamage: 2
   HP: 20
+  price: 7
   attackSpriteB: {fileID: 2473687490876715158, guid: 4d701fb8bab94204e92af20e3e7b6a8a, type: 3}
   hitSpriteB: {fileID: 2222463801079782474, guid: 4d701fb8bab94204e92af20e3e7b6a8a, type: 3}
   hitRedSpriteB: {fileID: -598267159285503414, guid: 4d701fb8bab94204e92af20e3e7b6a8a, type: 3}

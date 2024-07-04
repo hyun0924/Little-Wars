@@ -13,6 +13,7 @@ public class UnitData : ScriptableObject
     public float attackDelay;
     public float attackDamage;
     public float HP;
+    public int price;
     [SerializeField] private Sprite attackSpriteB;
     [SerializeField] private Sprite hitSpriteB;
     [SerializeField] private Sprite hitRedSpriteB;
