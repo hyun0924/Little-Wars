@@ -18,6 +18,7 @@ public class Unit : MonoBehaviour
     private bool wasAttack; // 한 번 공격했는지
     private bool isHit; // 맞고 있는 중인지
     private bool isDie; // 죽고 있는 중인지
+    private int moveDirection;
     private float currentMoveSpeed;
     private float currentHP;
     private GameObject enemy;
@@ -27,7 +28,8 @@ public class Unit : MonoBehaviour
 
     private void Awake()
     {
-        currentMoveSpeed = baseColor == BaseColor.Blue ? unitData.moveSpeed : -unitData.moveSpeed;
+        moveDirection = baseColor == BaseColor.Blue ? 1 : -1;
+        currentMoveSpeed = unitData.moveSpeed;
         animator = GetComponent<Animator>();
         sr = GetComponent<SpriteRenderer>();
         dust = transform.GetComponentInChildren<ParticleSystem>();
@@ -41,7 +43,7 @@ public class Unit : MonoBehaviour
 
     private void Update()
     {
-        float newX = transform.position.x + currentMoveSpeed * Time.deltaTime;
+        float newX = transform.position.x + currentMoveSpeed * Time.deltaTime * moveDirection;
         transform.position = new Vector3(newX, transform.position.y, 0);
 
         if (isDie) return;
@@ -71,31 +73,34 @@ public class Unit : MonoBehaviour
     {
         if (isDie) return;
 
-        if (unitData.unitType == UnitType.W)
-        {
-            if (!enemies.Contains(other.gameObject))
-            {
-                enemies.Add(other.gameObject);
-                animator.SetBool("isMoving", false);
-                if (!isFight) delay = unitData.attackDelay;
-            }
-            return;
-        }
-
         BaseColor enemyBaseColor = (BaseColor)(((int)baseColor + 1) % 2);
         if (other.gameObject.tag == enemyBaseColor.ToString())
         {
-            currentMoveSpeed = 0;
-            enemy = other.gameObject;
-            animator.SetBool("isMoving", false);
-            delay = unitData.attackDelay;
-            if (dust != null) dust.Stop();
+            if (unitData.unitType == UnitType.B || unitData.unitType == UnitType.W)
+            {
+                if (!enemies.Contains(other.gameObject))
+                {
+                    currentMoveSpeed = 0;
+                    enemies.Add(other.gameObject);
+                    animator.SetBool("isMoving", false);
+                    if (!isFight) delay = unitData.attackDelay;
+                    if (dust != null) dust.Stop();
+                }
+            }
+            else
+            {
+                currentMoveSpeed = 0;
+                enemy = other.gameObject;
+                animator.SetBool("isMoving", false);
+                delay = unitData.attackDelay;
+                if (dust != null) dust.Stop();
+            }
         }
 
         else if (other.gameObject.tag == baseColor.ToString())
         {
             Debug.Log("TriggerEnter");
-            bool isFrontUnit = (transform.position.x - other.transform.position.x) / currentMoveSpeed > 0;
+            bool isFrontUnit = (transform.position.x - other.transform.position.x) / moveDirection > 0;
             if (isFrontUnit) return;
 
             currentMoveSpeed = 0;
@@ -109,17 +114,21 @@ public class Unit : MonoBehaviour
         Debug.Log("TriggerExit");
         if (other.gameObject.tag != "Detect")
         {
-            if (unitData.unitType == UnitType.W && enemies.Contains(other.gameObject))
+            if ((unitData.unitType == UnitType.B || unitData.unitType == UnitType.W) && enemies.Contains(other.gameObject))
             {
                 enemies.Remove(other.gameObject);
                 if (enemies.Count == 0)
                 {
                     isFight = false;
                     animator.SetBool("isMoving", true);
+                    if (unitData.unitType == UnitType.W) OnMoving();
                 }
             }
             else
             {
+                bool isBehindUnit = (transform.position.x - other.transform.position.x) / moveDirection > 0;
+                if (isBehindUnit) return;
+
                 enemy = null;
                 OnMoving();
             }
@@ -134,7 +143,7 @@ public class Unit : MonoBehaviour
         sr.sprite = originSprite;
         animator.SetBool("isMoving", true);
         StopAllCoroutines();
-        currentMoveSpeed = baseColor == BaseColor.Blue ? unitData.moveSpeed : -unitData.moveSpeed;
+        currentMoveSpeed = unitData.moveSpeed;
         if (dust != null) dust.Play();
     }
 
@@ -166,17 +175,25 @@ public class Unit : MonoBehaviour
                 if (baseColor == BaseColor.Red) pos += new Vector3(-0.3f, 0, 0);
                 else pos += new Vector3(0.3f, 0, 0);
                 Instantiate(unitData.GetProjective(baseColor), pos, Quaternion.identity);
-                enemyHit();
+                enemyHit(e);
             }
         }
     }
 
     private void enemyHit()
     {
-        Unit unit = enemy.GetComponent<Unit>();
-        BaseController b = enemy.GetComponent<BaseController>();
-        if (unit != null) unit.OnHit(unitData.attackDamage);
-        else if (b != null) b.OnHit(unitData.attackDamage);
+        Unit unit;
+        BaseController b;
+        if (unit = enemy.GetComponent<Unit>()) unit.OnHit(unitData.attackDamage);
+        else if (b = enemy.GetComponent<BaseController>()) b.OnHit(unitData.attackDamage);
+    }
+
+    private void enemyHit(GameObject e)
+    {
+        Unit unit;
+        BaseController b;
+        if (unit = e.GetComponent<Unit>()) unit.OnHit(unitData.attackDamage);
+        else if (b = e.GetComponent<BaseController>()) b.OnHit(unitData.attackDamage);
     }
 
     public void OnHit(float damage)

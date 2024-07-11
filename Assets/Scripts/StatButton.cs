@@ -41,8 +41,9 @@ public class StatButton : MonoBehaviour
 
         GameManager.Instance.DecreaseMoney(upgradePrices[level++]);
         SetText();
-
-        // 마법사 소환하기
+        
+        if (level == 2) GameManager.Instance.SpawnUnit(baseColor, UnitType.B, 0);
+        else if (level == 6) GameManager.Instance.SpawnUnit(baseColor, UnitType.B, 1);
     }
 
     private void SetText()

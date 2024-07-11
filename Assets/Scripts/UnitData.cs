@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum UnitType { A, G, S, W }
+public enum UnitType { A, G, S, W, B }
 
 [CreateAssetMenu(fileName = "UnitData", menuName = "UnitData", order = 0)]
 public class UnitData : ScriptableObject

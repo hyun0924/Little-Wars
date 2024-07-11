@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75310751419c5574aae0a104cfa6c794, type: 3}
-  m_Name: Wand
+  m_Name: Base
   m_EditorClassIdentifier: 
-  unitType: 3
-  moveSpeed: 1
+  unitType: 4
+  moveSpeed: 0
   attackSpeed: 0.3
   attackDelay: 2
-  attackDamage: 3
-  HP: 5
+  attackDamage: 2
+  HP: 100
   price: 9
   attackSpriteB: {fileID: 163955602261942339, guid: 4d701fb8bab94204e92af20e3e7b6a8a, type: 3}
   hitSpriteB: {fileID: 0}
@@ -29,4 +29,4 @@ MonoBehaviour:
   dieSpriteR: {fileID: 0}
   projectiveB: {fileID: 7138916361236119448, guid: c04d7d9ca1195ee4faed972308a7e153, type: 3}
   projectiveR: {fileID: 7138916361236119448, guid: f4a28eef22e1ca442907cbf3bbc962fc, type: 3}
-  portrait: {fileID: 6492391481879774325, guid: 3765a367fb48f9040bca18add088d6d3, type: 3}
+  portrait: {fileID: -4325431805895911581, guid: 3765a367fb48f9040bca18add088d6d3, type: 3}

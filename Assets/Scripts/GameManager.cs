@@ -52,8 +52,18 @@ public class GameManager : MonoBehaviour
 
     public void SpawnUnit(BaseColor baseColor, UnitType unitType, int level)
     {
-        int index = (int)baseColor * 4 + (int)unitType + level * 8;
-        Instantiate(UnitPrefabs[index]);
+        int index = (int)baseColor * 5 + (int)unitType + level * 10;
+        if (unitType == UnitType.B)
+        {
+            if (Bases[(int)baseColor].transform.childCount == 1)
+                Destroy(Bases[(int)baseColor].transform.GetChild(0).gameObject);
+
+            Instantiate(UnitPrefabs[index], Bases[(int)baseColor].transform);
+        }
+        else
+        {
+            Instantiate(UnitPrefabs[index]);
+        }
     }
 
     public void RecoveryBaseHP(BaseColor baseColor, float hp)
@@ -61,7 +71,7 @@ public class GameManager : MonoBehaviour
         Bases[(int)baseColor].GetComponent<BaseController>().IncreaseHp(hp);
     }
 
-    private void IncreaseMoney()
+    public void IncreaseMoney()
     {
         if (money == maxMoney) return;
 

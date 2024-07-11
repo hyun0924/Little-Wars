@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: WandUpgrade
   m_EditorClassIdentifier: 
   unitType: 3
-  moveSpeed: 0
+  moveSpeed: 1
   attackSpeed: 0.3
   attackDelay: 2
-  attackDamage: 5
-  HP: 100
+  attackDamage: 4
+  HP: 7
   price: 10
   attackSpriteB: {fileID: 1814896009074319080, guid: 4d701fb8bab94204e92af20e3e7b6a8a, type: 3}
   hitSpriteB: {fileID: 0}
