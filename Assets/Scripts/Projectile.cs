@@ -15,7 +15,15 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        other.gameObject.GetComponent<Unit>().OnHit(damage);
+        enemyHit(other.gameObject);
         Destroy(gameObject);
+    }
+    
+    private void enemyHit(GameObject enemy)
+    {
+        Unit unit = enemy.GetComponent<Unit>();
+        BaseController b = enemy.GetComponent<BaseController>();
+        if (unit != null) unit.OnHit(damage);
+        else if (b != null) b.OnHit(damage);
     }
 }

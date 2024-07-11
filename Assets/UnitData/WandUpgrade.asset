@@ -18,6 +18,7 @@ MonoBehaviour:
   attackDelay: 2
   attackDamage: 5
   HP: 100
+  price: 10
   attackSpriteB: {fileID: 1814896009074319080, guid: 4d701fb8bab94204e92af20e3e7b6a8a, type: 3}
   hitSpriteB: {fileID: 0}
   hitRedSpriteB: {fileID: 0}
@@ -28,3 +29,4 @@ MonoBehaviour:
   dieSpriteR: {fileID: 0}
   projectiveB: {fileID: 7138916361236119448, guid: c04d7d9ca1195ee4faed972308a7e153, type: 3}
   projectiveR: {fileID: 7138916361236119448, guid: f4a28eef22e1ca442907cbf3bbc962fc, type: 3}
+  portrait: {fileID: 1964160008454016175, guid: 3765a367fb48f9040bca18add088d6d3, type: 3}

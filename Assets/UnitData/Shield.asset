@@ -29,3 +29,4 @@ MonoBehaviour:
   dieSpriteR: {fileID: -6220024457818614411, guid: 4d701fb8bab94204e92af20e3e7b6a8a, type: 3}
   projectiveB: {fileID: 0}
   projectiveR: {fileID: 0}
+  portrait: {fileID: 7293623749340134194, guid: 3765a367fb48f9040bca18add088d6d3, type: 3}

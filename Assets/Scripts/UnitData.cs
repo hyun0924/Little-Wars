@@ -24,6 +24,7 @@ public class UnitData : ScriptableObject
     [SerializeField] private Sprite dieSpriteR;
     [SerializeField] private GameObject projectiveB;
     [SerializeField] private GameObject projectiveR;
+    public Sprite portrait;
 
     public Sprite GetAttackSprite(BaseColor baseColor)
     {

@@ -166,14 +166,17 @@ public class Unit : MonoBehaviour
                 if (baseColor == BaseColor.Red) pos += new Vector3(-0.3f, 0, 0);
                 else pos += new Vector3(0.3f, 0, 0);
                 Instantiate(unitData.GetProjective(baseColor), pos, Quaternion.identity);
-                e.GetComponent<Unit>().OnHit(unitData.attackDamage);
+                enemyHit();
             }
         }
     }
 
     private void enemyHit()
     {
-        enemy.GetComponent<Unit>().OnHit(unitData.attackDamage);
+        Unit unit = enemy.GetComponent<Unit>();
+        BaseController b = enemy.GetComponent<BaseController>();
+        if (unit != null) unit.OnHit(unitData.attackDamage);
+        else if (b != null) b.OnHit(unitData.attackDamage);
     }
 
     public void OnHit(float damage)
