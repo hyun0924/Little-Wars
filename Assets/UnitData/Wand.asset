@@ -19,6 +19,7 @@ MonoBehaviour:
   attackDamage: 3
   HP: 5
   price: 9
+  upgradePrice: 12
   attackSpriteB: {fileID: 163955602261942339, guid: 4d701fb8bab94204e92af20e3e7b6a8a, type: 3}
   hitSpriteB: {fileID: 0}
   hitRedSpriteB: {fileID: 0}

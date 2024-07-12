@@ -22,7 +22,7 @@ public class StatButton : MonoBehaviour
         button = GetComponent<Button>();
         button.onClick.AddListener(() => GameManager.Instance.RecoveryBaseHP(baseColor, stats[level]));
         button.onClick.AddListener(() =>
-                GameManager.Instance.DecreaseMoney(prices[level]));
+                GameManager.Instance.DecreaseMoney(prices[level], baseColor));
         SetText();
     }
     
@@ -39,7 +39,7 @@ public class StatButton : MonoBehaviour
     {
         if (level == stats.Length - 1) return;
 
-        GameManager.Instance.DecreaseMoney(upgradePrices[level++]);
+        GameManager.Instance.DecreaseMoney(upgradePrices[level++], baseColor);
         SetText();
         
         if (level == 2) GameManager.Instance.SpawnUnit(baseColor, UnitType.B, 0);

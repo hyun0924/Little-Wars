@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum UnitType { A, G, S, W, B }
+public enum UnitType { S, A, G, W, B }
 
 [CreateAssetMenu(fileName = "UnitData", menuName = "UnitData", order = 0)]
 public class UnitData : ScriptableObject
@@ -14,6 +14,7 @@ public class UnitData : ScriptableObject
     public float attackDamage;
     public float HP;
     public int price;
+    public int upgradePrice;
     [SerializeField] private Sprite attackSpriteB;
     [SerializeField] private Sprite hitSpriteB;
     [SerializeField] private Sprite hitRedSpriteB;

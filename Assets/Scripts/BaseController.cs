@@ -14,6 +14,8 @@ public class BaseController : MonoBehaviour
     [SerializeField] private Slider hpSlider;
     [SerializeField] private TextMeshProUGUI hpText;
     private float currentHP;
+    public float MaxHP { get { return maxHP; } }
+    public float CurrentHP { get { return currentHP; } }
     private bool isDestroy;
     private SpriteRenderer sr;
 

@@ -11,7 +11,6 @@ public class SpawnButton : MonoBehaviour
     [SerializeField] UnitData[] unitDatas;
     [SerializeField] GameObject upgradeBtn;
     [SerializeField] TextMeshProUGUI priceText;
-    [SerializeField] int upgradePrice;
 
     private TextMeshProUGUI hpText;
     private TextMeshProUGUI atkText;
@@ -27,7 +26,7 @@ public class SpawnButton : MonoBehaviour
         button.onClick.AddListener(() =>
                 GameManager.Instance.SpawnUnit(baseColor, unitType, level));
         button.onClick.AddListener(() => 
-                GameManager.Instance.DecreaseMoney(unitDatas[level].price));
+                GameManager.Instance.DecreaseMoney(unitDatas[level].price, baseColor));
 
         hpText = transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
         if (transform.childCount > 2)
@@ -38,7 +37,7 @@ public class SpawnButton : MonoBehaviour
 
     private void Update()
     {
-        if (level == 0 && GameManager.money >= upgradePrice) upgradeBtn.SetActive(true);
+        if (level == 0 && GameManager.money >= unitDatas[level].upgradePrice) upgradeBtn.SetActive(true);
         else upgradeBtn.SetActive(false);
 
         if (GameManager.money < unitDatas[level].price) button.interactable = false;
@@ -49,8 +48,7 @@ public class SpawnButton : MonoBehaviour
     {
         if (level == 1) return;
 
-        level++;
-        GameManager.Instance.DecreaseMoney(upgradePrice);
+        GameManager.Instance.DecreaseMoney(unitDatas[level++].upgradePrice, baseColor);
         SetText();
     }
 

@@ -17,10 +17,19 @@ public class Unit : MonoBehaviour
     private bool isFight; // 싸우는 중인지
     private bool wasAttack; // 한 번 공격했는지
     private bool isHit; // 맞고 있는 중인지
-    private bool isDie; // 죽고 있는 중인지
+    public bool isDie; // 죽고 있는 중인지
+    public bool isMoving
+    {
+        get
+        {
+            if (animator == null) return false;
+            else return animator.GetBool("isMoving");
+        }
+    }
     private int moveDirection;
     private float currentMoveSpeed;
     private float currentHP;
+
     private GameObject enemy;
     private Sprite originSprite;
     private ParticleSystem dust;
@@ -100,8 +109,7 @@ public class Unit : MonoBehaviour
         else if (other.gameObject.tag == baseColor.ToString())
         {
             Debug.Log("TriggerEnter");
-            bool isFrontUnit = (transform.position.x - other.transform.position.x) / moveDirection > 0;
-            if (isFrontUnit) return;
+            if (!GameManager.Instance.CheckFrontUnit(baseColor, this, other.GetComponent<Unit>())) return;
 
             currentMoveSpeed = 0;
             if (dust != null) dust.Stop();
@@ -111,7 +119,8 @@ public class Unit : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        Debug.Log("TriggerExit");
+        if (isDie) return;
+
         if (other.gameObject.tag != "Detect")
         {
             if ((unitData.unitType == UnitType.B || unitData.unitType == UnitType.W) && enemies.Contains(other.gameObject))
@@ -126,9 +135,18 @@ public class Unit : MonoBehaviour
             }
             else
             {
-                bool isBehindUnit = (transform.position.x - other.transform.position.x) / moveDirection > 0;
-                if (isBehindUnit) return;
-
+                Debug.Log($"TriggerExit {other.GetComponent<Unit>().baseColor} -> {baseColor} ");
+                BaseColor enemyBaseColor = (BaseColor)(((int)baseColor + 1) % 2);
+                if (other.gameObject.tag == baseColor.ToString())
+                {
+                    if (GameManager.Instance.CheckFrontUnitExist(baseColor, this) &&
+                        (!GameManager.Instance.CheckFrontUnitMoving(baseColor, this) ||
+                         !GameManager.Instance.CheckFrontUnit(baseColor, this, other.GetComponent<Unit>()))) return;
+                }
+                else if (other.gameObject.tag == enemyBaseColor.ToString())
+                {
+                    if (!GameManager.Instance.CheckFrontUnitMoving(baseColor, this)) return;
+                }
                 enemy = null;
                 OnMoving();
             }
@@ -248,6 +266,7 @@ public class Unit : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
 
+        GameManager.unitLinkedLists[(int)baseColor].Remove(this);
         Destroy(gameObject);
     }
 }

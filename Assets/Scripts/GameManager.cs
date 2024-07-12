@@ -16,8 +16,11 @@ public class GameManager : MonoBehaviour
 
     private Difficulty currentDifficulty;
 
-    [SerializeField] private int maxMoney;
+    public int maxMoney;
     public static int money;
+
+    public static List<LinkedList<Unit>> unitLinkedLists;
+    public GameObject EnemyBase { get { return Bases[1];}}
 
     public static GameManager Instance;
     private void Awake()
@@ -32,8 +35,16 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        unitLinkedLists = new List<LinkedList<Unit>>
+        {
+            new LinkedList<Unit>(),
+            new LinkedList<Unit>()
+        };
+
         money = 0;
         moneySlider.value = 0;
+        moneySlider.maxValue = maxMoney;
+        moneySlider.GetComponent<RectTransform>().sizeDelta = new Vector2(110f * maxMoney, 70);
         moneyText.text = "0";
         InvokeRepeating("IncreaseMoney", 0, 1);
     }
@@ -52,17 +63,20 @@ public class GameManager : MonoBehaviour
 
     public void SpawnUnit(BaseColor baseColor, UnitType unitType, int level)
     {
+        GameObject unit;
         int index = (int)baseColor * 5 + (int)unitType + level * 10;
         if (unitType == UnitType.B)
         {
             if (Bases[(int)baseColor].transform.childCount == 1)
                 Destroy(Bases[(int)baseColor].transform.GetChild(0).gameObject);
 
-            Instantiate(UnitPrefabs[index], Bases[(int)baseColor].transform);
+            unit = Instantiate(UnitPrefabs[index], Bases[(int)baseColor].transform);
+            unitLinkedLists[(int)baseColor].AddLast(unit.GetComponent<Unit>());
         }
         else
         {
-            Instantiate(UnitPrefabs[index]);
+            unit = Instantiate(UnitPrefabs[index]);
+            unitLinkedLists[(int)baseColor].AddLast(unit.GetComponent<Unit>());
         }
     }
 
@@ -79,11 +93,45 @@ public class GameManager : MonoBehaviour
         moneyText.text = "" + money;
     }
 
-    public void DecreaseMoney(int price)
+    public bool CheckFrontUnitExist(BaseColor baseColor, Unit unit)
     {
-        money = money - price;
-        moneySlider.value = money;
-        moneyText.text = "" + money;
+        return unitLinkedLists[(int)baseColor].Find(unit).Previous != null;
+    }
+
+    public bool CheckFrontUnit(BaseColor baseColor, Unit myUnit, Unit otherUnit)
+    {
+        LinkedListNode<Unit> frontUnit = unitLinkedLists[(int)baseColor].Find(myUnit).Previous;
+        if (frontUnit == null) return false;
+        else
+        {
+            if (frontUnit.Equals(unitLinkedLists[(int)baseColor].Find(otherUnit))) return true;
+            else return false;
+        }
+    }
+
+    /// <summary>
+    /// 앞 유닛 없거나 이동 중이거나 죽었으면 true
+    /// 앞 유닛 있는데 살아있고 움직이면 false
+    /// </summary>
+    public bool CheckFrontUnitMoving(BaseColor baseColor, Unit unit)
+    {
+        LinkedListNode<Unit> frontUnit = unitLinkedLists[(int)baseColor].Find(unit).Previous;
+        if (frontUnit != null)
+        {
+            return frontUnit.Value.isMoving || frontUnit.Value.isDie;
+        }
+        else return true;
+    }
+
+    public void DecreaseMoney(int price, BaseColor baseColor)
+    {
+        if (baseColor == BaseColor.Blue)
+        {
+            // money = money - price;
+            // moneySlider.value = money;
+            // moneyText.text = "" + money;
+        }
+        else EnemySimulator.money -= price;
     }
 
     public void GameOver(string loser)
